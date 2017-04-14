@@ -33,6 +33,9 @@ from Crypto.PublicKey import RSA
 # Set codes for success and failure of APIs.
 # This can be enhanced to return service specific
 # error codes down the line.
+
+import copy
+
 SUCCESS = 0
 FAILURE = 255
 
@@ -84,7 +87,7 @@ def create_controller(service, service_name):
 def get_dir_name(filename):
     """Return the current directory name from filename
 
-    param filename: The file whose directory name has 
+    param filename: The file whose directory name has
             to be returned
 
     return: string with directory name
@@ -94,7 +97,7 @@ def get_dir_name(filename):
 def get_dir_path(filename):
     """Return the current directory path from filename
 
-    param filename: The file whose directory path has 
+    param filename: The file whose directory path has
             to be returned
 
     return: string with directory path
@@ -280,7 +283,7 @@ def import_ssh_key(private_key_file, passphrase=None):
     """
     Import contents from RSA private key file
 
-    param private_key_file: path to private key file 
+    param private_key_file: path to private key file
 
     param passphrase: passphrase for the private key, by default
             None
@@ -330,3 +333,28 @@ def requestid_in_response(response):
             if request_id:
                 return request_id
     return None
+
+def http_log_req(method, url, kwargs):
+    string_parts = ['curl -g -i']
+
+    if not kwargs.get('verify', True):
+        string_parts.append(' --insecure')
+
+    string_parts.append(" '%s'" % url)
+    string_parts.append(' -X %s' % method)
+
+    headers = copy.deepcopy(kwargs['headers'])
+    # self._redact(headers, ['X-Auth-Token'])
+    # because dict ordering changes from 2 to 3
+    keys = sorted(headers.keys())
+    for name in keys:
+        value = headers[name]
+        header = ' -H "%s: %s"' % (name, value)
+        string_parts.append(header)
+
+    if 'data' in kwargs:
+        data = json.loads(kwargs['data'])
+        # self._redact(data, ['auth', 'passwordCredentials', 'password'])
+        string_parts.append(" -d '%s'" % json.dumps(data))
+
+    print ("REQ: %s" % "".join(string_parts))

@@ -40,7 +40,7 @@ def main(args = sys.argv):
     """
 
     try:
-        # As stated above, the first argument would be the 
+        # As stated above, the first argument would be the
         # cli binary path. Pop the first argument.
         args = args[1:]
         config.setup_config_handler(args)
@@ -54,6 +54,7 @@ def main(args = sys.argv):
         command = utils.dash_to_underscore(args[1])
         method = utils.get_module_method(controller, command,
                                          service_name)
+        # import pdb; pdb.set_trace()
         result = method(args[1:])
         return output.format_result(result)
     except IndexError as ie:
@@ -72,4 +73,4 @@ def main(args = sys.argv):
         if config.check_debug():
             raise
         return FAILURE
-        
+

@@ -97,7 +97,7 @@ class HeadObjectOp(ObjectOp):
 
 
 class PutObjectOp(ObjectOp):
-    
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'PUT'
@@ -113,7 +113,7 @@ class PutObjectOp(ObjectOp):
         args_dict = vars(args)
         self.bucket_name = args_dict['bucket']
         self.object_name = args_dict['key']
-        self.local_file_name = args_dict['body'] 
+        self.local_file_name = args_dict['body']
         self.dss_op_path = '/' + self.bucket_name + '/' + self.object_name
 
 
@@ -153,8 +153,8 @@ class PutObjectOp(ObjectOp):
 
 
 class GetObjectOp(ObjectOp):
-    
-    
+
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'GET'
@@ -171,7 +171,7 @@ class GetObjectOp(ObjectOp):
         self.bucket_name = args_dict['bucket']
         self.object_name = args_dict['key']
         if(args_dict['outfile'] is not None):
-            self.local_file_name = args_dict['outfile'] 
+            self.local_file_name = args_dict['outfile']
         else:
             self.local_file_name = self.object_name
         self.dss_op_path = '/' + self.bucket_name + '/' + self.object_name
@@ -192,6 +192,7 @@ class GetObjectOp(ObjectOp):
         # make request
         resp = ''
         with open(self.local_file_name, 'wb') as handle:
+            http_log_req(method=self.http_method, url=request_url, kwargs={ 'headers' : self.http_headers})
             resp = requests.get(request_url, headers = self.http_headers, stream = True, verify = self.is_secure_request)
             if resp.ok:
                 for block in resp.iter_content(1024):
@@ -213,13 +214,13 @@ class GetObjectOp(ObjectOp):
                       '}')
 
             self.pretty_print_json_str(response_json)
-        
+
         return result
 
 
 class GetPresignedURLOp(ObjectOp):
-    
-    
+
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'GET'
@@ -235,7 +236,7 @@ class GetPresignedURLOp(ObjectOp):
         args_dict = vars(args)
         self.bucket_name = args_dict['bucket']
         self.object_name = args_dict['key']
-        self.validity = args_dict['expiry'] 
+        self.validity = args_dict['expiry']
         self.dss_op_path = '/' + self.bucket_name + '/' + self.object_name
 
 
@@ -263,8 +264,8 @@ class GetPresignedURLOp(ObjectOp):
 
 
 class CopyObjectOp(ObjectOp):
-    
-    
+
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'PUT'
@@ -280,7 +281,7 @@ class CopyObjectOp(ObjectOp):
         args_dict = vars(args)
         self.bucket_name = args_dict['bucket']
         self.object_name = args_dict['key']
-        self.copy_source = args_dict['copy_source'] 
+        self.copy_source = args_dict['copy_source']
         self.dss_op_path = '/' + self.bucket_name + '/' + self.object_name
 
 
@@ -304,8 +305,8 @@ class CopyObjectOp(ObjectOp):
 
 
 class InitMPUploadOp(ObjectOp):
-    
-    
+
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'POST'
@@ -314,7 +315,7 @@ class InitMPUploadOp(ObjectOp):
 
 
 class CancelMPUploadOp(ObjectOp):
-    
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'DELETE'
@@ -338,7 +339,7 @@ class CancelMPUploadOp(ObjectOp):
 
 
 class ListPartsOp(ObjectOp):
-    
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'GET'
@@ -366,7 +367,7 @@ class ListPartsOp(ObjectOp):
 
 
 class UploadPartOp(ObjectOp):
-    
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'PUT'
@@ -404,13 +405,13 @@ class UploadPartOp(ObjectOp):
         self.http_headers['Content-Type'] = 'application/octet-stream'
 
         # construct request
-        request_url = self.dss_url + self.dss_op_path 
+        request_url = self.dss_url + self.dss_op_path
         if(self.dss_query_str is not None):
-            request_url += '?' + self.dss_query_str  
+            request_url += '?' + self.dss_query_str
         data = open(self.local_file_name, 'rb')
         # make request
         resp = requests.put(request_url, headers = self.http_headers, data=data, verify = self.is_secure_request)
-      
+
         return resp
 
 
@@ -428,7 +429,7 @@ class UploadPartOp(ObjectOp):
 
 
 class CompleteMPUploadOp(ObjectOp):
-    
+
     def __init__(self):
         ObjectOp.__init__(self)
         self.http_method = 'POST'
@@ -463,13 +464,14 @@ class CompleteMPUploadOp(ObjectOp):
         self.http_headers['Content-Type'] = 'text/xml'
 
         # construct request
-        request_url = self.dss_url + self.dss_op_path 
+        request_url = self.dss_url + self.dss_op_path
         if(self.dss_query_str is not None):
-            request_url += '?' + self.dss_query_str  
+            request_url += '?' + self.dss_query_str
         data = open(self.local_file_name, 'rb')
         # make request
+        http_log_req(method=self.http_method, url=request_url, kwargs={ 'headers' : self.http_headers})
         resp = requests.post(request_url, headers = self.http_headers, data=data, verify = self.is_secure_request)
-      
+
         # process response
         processed_resp = self.process_result(resp)
         return processed_resp

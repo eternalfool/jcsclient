@@ -1,0 +1,12 @@
+# Environment vars for jcs cli
+#
+# If you want to modify this file to put in your credentials (of course you
+# want to do that :) ), then create a copy of this file with name openrc:
+#      cp openrc.sample openrc
+# and source that file
+#      source openrc
+
+# Provide your access and secret keys
+export ACCESS_KEY=b0a5d49a35fa45bf9f161fc09ea53c14
+export SECRET_KEY=94f7cc0a129f4392a897dd2051009d13
+

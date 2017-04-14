@@ -34,12 +34,12 @@ import argparse
 import exception
 
 endpoints = {
-    'vpc'    : 'https://vpc.ind-west-1.jiocloudservices.com/',
-    'iam'    : 'https://iam.ind-west-1.jiocloudservices.com/',
-    'rds'    : 'https://rds.ind-west-1.jiocloudservices.com/',
-    'dss'    : 'https://dss.ind-west-1.jiocloudservices.com/',
-    'compute': 'https://compute.ind-west-1.jiocloudservices.com/',
-    'mon'    : 'https://mon.ind-west-1.jiocloudservices.com/'
+    'vpc'    : 'https://vpc.ind-west-1.staging.jiocloudservices.com/',
+    'iam'    : 'https://iam.ind-west-1.staging.jiocloudservices.com/',
+    'rds'    : 'https://rds.ind-west-1.staging.jiocloudservices.com/',
+    'dss'    : 'https://dss.ind-west-1.staging.jiocloudservices.com/',
+    'compute': 'https://compute.ind-west-1.staging.jiocloudservices.com/',
+    'mon'    : 'https://mon.ind-west-1.staging.jiocloudservices.com/'
 }
 
 config_handler = None
@@ -64,7 +64,7 @@ def get_config_handler():
     """Fetch the global object of ConfigHandler."""
     global config_handler
     # This is to ensure that incase the initial setup
-    # of config handler failed, 
+    # of config handler failed,
     if config_handler is None:
         config_handler = ConfigHandler()
     return config_handler
@@ -83,11 +83,12 @@ def get_service_url(service):
 
     param service: service name whose url needed
 
-    return: string containing the url 
+    return: string containing the url
     """
     return get_config_handler().get_service_url(service)
 
 def check_secure():
+    return False
     """Check whether to use certificates for connection"""
     return get_config_handler().check_secure()
 

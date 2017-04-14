@@ -26,6 +26,7 @@ from jcsclient import config
 import json
 import requests
 from dss_auth import *
+from jcsclient.utils import http_log_req
 
 class DSSOp(object):
     """Abstract class defining a common api for each DSS opertaion
@@ -63,7 +64,7 @@ class DSSOp(object):
     def execute(self):
         pass
 
-    """ Each operation should override this method if it needs to 
+    """ Each operation should override this method if it needs to
     reprocess the output from DSS to make it compatible with the
     the cli
 
@@ -80,9 +81,10 @@ class DSSOp(object):
         self.http_headers['Date'] = formatdate(usegmt=True)
 
         # construct request
-        request_url = self.dss_url + self.dss_op_path 
+        request_url = self.dss_url + self.dss_op_path
         if(self.dss_query_str is not None):
-            request_url += '?' + self.dss_query_str  
+            request_url += '?' + self.dss_query_str
+        http_log_req(method=self.http_method, url=request_url, kwargs={ 'headers' : self.http_headers})
         # make request
         resp = requests.request(self.http_method, request_url, headers = self.http_headers, verify = self.is_secure_request)
         return resp
